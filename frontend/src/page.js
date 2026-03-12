@@ -17,7 +17,6 @@ const categories = [
   { id: "tv", section: "TV Shows", icon: "📺", title: "Binge-Worthy Shows", desc: "Can't-stop-watching series", tags: ["Squid Game S2", "The Bear", "Severance", "House of Dragon"], accent: "#a78bfa", img: "📡" },
 ];
 
-// Embeddable content — YouTube for video/music, iframe games, YouTube dance tutorials
 const sectionDetails = {
   Music: {
     hero: { emoji: "🎧", title: "Best Songs", subtitle: "Top hits dominating the charts right now", accent: "#c084fc" },
@@ -79,158 +78,88 @@ const sectionDetails = {
 const tagAccents = { Song: "#c084fc", Movie: "#f87171", Dance: "#fb923c", Game: "#4ade80", "TV Show": "#a78bfa" };
 const NAV_SECTIONS = ["Music", "Dance", "Movies", "Games", "TV Shows"];
 
-// Built-in Tic Tac Toe game component
 function TicTacToe() {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState(true);
-
-  const calculateWinner = (squares) => {
-    const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-    for (let [a,b,c] of lines) {
-      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) return squares[a];
-    }
+  const calculateWinner = (s) => {
+    for (let [a,b,c] of [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]])
+      if (s[a] && s[a]===s[b] && s[a]===s[c]) return s[a];
     return null;
   };
-
   const winner = calculateWinner(board);
   const isDraw = !winner && board.every(Boolean);
-
   const handleClick = (i) => {
     if (board[i] || winner) return;
-    const next = board.slice();
-    next[i] = xIsNext ? "X" : "O";
-    setBoard(next);
-    setXIsNext(!xIsNext);
+    const next = board.slice(); next[i] = xIsNext ? "X" : "O";
+    setBoard(next); setXIsNext(!xIsNext);
   };
-
-  const reset = () => { setBoard(Array(9).fill(null)); setXIsNext(true); };
-
   return (
     <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:"100%", background:"#0a0612", padding:"24px" }}>
-      <div style={{ fontFamily:"'Playfair Display', serif", fontSize:"22px", color:"#e8c84a", marginBottom:"8px", letterSpacing:"0.1em" }}>
-        Tic Tac Toe
-      </div>
-      <div style={{ fontFamily:"'Crimson Pro', serif", fontSize:"14px", fontStyle:"italic", color: winner ? "#4ade80" : isDraw ? "#fb923c" : "#c4a888", marginBottom:"20px" }}>
-        {winner ? `🎉 Player ${winner} wins!` : isDraw ? "🤝 It's a draw!" : `Player ${xIsNext ? "X" : "O"}'s turn`}
+      <div style={{ fontFamily:"'Playfair Display',serif", fontSize:"22px", color:"#e8c84a", marginBottom:"8px", letterSpacing:"0.1em" }}>Tic Tac Toe</div>
+      <div style={{ fontFamily:"'Crimson Pro',serif", fontSize:"14px", fontStyle:"italic", color: winner?"#4ade80":isDraw?"#fb923c":"#c4a888", marginBottom:"20px" }}>
+        {winner ? `🎉 Player ${winner} wins!` : isDraw ? "🤝 It's a draw!" : `Player ${xIsNext?"X":"O"}'s turn`}
       </div>
       <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"8px", marginBottom:"20px" }}>
-        {board.map((cell, i) => (
-          <button key={i} onClick={() => handleClick(i)} style={{
-            width:80, height:80, background: cell ? "rgba(140,30,30,0.3)" : "rgba(140,30,30,0.1)",
-            border:"1px solid rgba(180,60,60,0.4)", borderRadius:"4px", cursor: cell||winner ? "default" : "pointer",
-            fontSize:"28px", fontWeight:900, color: cell==="X" ? "#f87171" : "#a78bfa",
-            transition:"all 0.15s",
-          }}>{cell}</button>
+        {board.map((cell,i) => (
+          <button key={i} onClick={()=>handleClick(i)} style={{ width:80, height:80, background:cell?"rgba(140,30,30,0.3)":"rgba(140,30,30,0.1)", border:"1px solid rgba(180,60,60,0.4)", borderRadius:"4px", cursor:cell||winner?"default":"pointer", fontSize:"28px", fontWeight:900, color:cell==="X"?"#f87171":"#a78bfa", transition:"all 0.15s" }}>{cell}</button>
         ))}
       </div>
-      <button onClick={reset} style={{
-        background:"linear-gradient(135deg,#8b0000,#5a0000)", color:"#e8c84a",
-        border:"none", borderRadius:"2px", padding:"10px 28px",
-        fontFamily:"'Crimson Pro', serif", fontSize:"12px", letterSpacing:"0.18em",
-        textTransform:"uppercase", cursor:"pointer"
-      }}>New Game</button>
+      <button onClick={()=>{setBoard(Array(9).fill(null));setXIsNext(true);}} style={{ background:"linear-gradient(135deg,#8b0000,#5a0000)", color:"#e8c84a", border:"none", borderRadius:"2px", padding:"10px 28px", fontFamily:"'Crimson Pro',serif", fontSize:"12px", letterSpacing:"0.18em", textTransform:"uppercase", cursor:"pointer" }}>New Game</button>
     </div>
   );
 }
 
 const STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing:border-box; margin:0; padding:0; }
   .fh-root { background:#06040a; min-height:100vh; font-family:'Crimson Pro',Georgia,serif; color:#e8ddd0; overflow-x:hidden; }
 
-  .fh-nav {
-    position:fixed; top:0; left:0; right:0; z-index:100;
-    display:flex; align-items:center; justify-content:space-between;
-    padding:0 32px; height:56px;
-    background:rgba(6,4,10,0.92); backdrop-filter:blur(24px);
-    border-bottom:1px solid rgba(180,80,80,0.15); gap:16px;
-  }
+  /* NAV */
+  .fh-nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:0 32px; height:56px; background:rgba(6,4,10,0.92); backdrop-filter:blur(24px); border-bottom:1px solid rgba(180,80,80,0.15); gap:16px; }
   .fh-logo { display:flex; align-items:center; gap:9px; cursor:pointer; font-family:'Playfair Display',serif; flex-shrink:0; }
-  .fh-logo-reel {
-    width:30px; height:30px; border-radius:50%;
-    background:radial-gradient(circle,#c0392b 0%,#6b0000 100%);
-    display:flex; align-items:center; justify-content:center; font-size:13px;
-    box-shadow:0 0 14px rgba(192,57,43,0.7); animation:reelPulse 3s ease-in-out infinite; flex-shrink:0;
-  }
+  .fh-logo-reel { width:30px; height:30px; border-radius:50%; background:radial-gradient(circle,#c0392b 0%,#6b0000 100%); display:flex; align-items:center; justify-content:center; font-size:13px; box-shadow:0 0 14px rgba(192,57,43,0.7); animation:reelPulse 3s ease-in-out infinite; flex-shrink:0; }
   @keyframes reelPulse { 0%,100%{box-shadow:0 0 14px rgba(192,57,43,0.7)} 50%{box-shadow:0 0 28px rgba(220,80,60,1)} }
   .fh-logo-text { font-size:17px; font-weight:900; letter-spacing:0.05em; background:linear-gradient(90deg,#e8c84a,#c0392b); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
   .fh-breadcrumb { display:flex; align-items:center; gap:6px; font-size:12px; color:rgba(180,140,100,0.5); letter-spacing:0.1em; flex-shrink:0; }
   .fh-breadcrumb-sep { color:rgba(140,80,60,0.4); font-size:10px; }
   .fh-breadcrumb-current { color:#e8c84a; font-style:italic; }
   .fh-nav-links { display:flex; gap:22px; align-items:center; }
-  .fh-nav-btn {
-    background:none; border:none; cursor:pointer;
-    font-family:'Crimson Pro',serif; font-size:12px; font-weight:400;
-    letter-spacing:0.14em; text-transform:uppercase;
-    color:rgba(220,200,180,0.45); transition:color 0.25s; padding:4px 0; position:relative; white-space:nowrap;
-  }
+  .fh-nav-btn { background:none; border:none; cursor:pointer; font-family:'Crimson Pro',serif; font-size:12px; font-weight:400; letter-spacing:0.14em; text-transform:uppercase; color:rgba(220,200,180,0.45); transition:color 0.25s; padding:4px 0; position:relative; white-space:nowrap; }
   .fh-nav-btn:hover,.fh-nav-btn.active { color:#e8c84a; }
   .fh-nav-btn.active::after { content:''; position:absolute; bottom:-4px; left:0; right:0; height:1px; background:linear-gradient(90deg,#e8c84a,transparent); }
-  .fh-home-btn {
-    display:flex; align-items:center; gap:6px;
-    background:rgba(140,30,30,0.15); border:1px solid rgba(180,60,60,0.3);
-    border-radius:2px; padding:5px 14px; color:#e8c84a; cursor:pointer;
-    font-family:'Crimson Pro',serif; font-size:11px; letter-spacing:0.16em; text-transform:uppercase;
-    transition:all 0.22s; flex-shrink:0;
-  }
+  .fh-home-btn { display:flex; align-items:center; gap:6px; background:rgba(140,30,30,0.15); border:1px solid rgba(180,60,60,0.3); border-radius:2px; padding:5px 14px; color:#e8c84a; cursor:pointer; font-family:'Crimson Pro',serif; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; transition:all 0.22s; flex-shrink:0; }
   .fh-home-btn:hover { background:rgba(180,50,50,0.28); border-color:rgba(220,80,60,0.55); transform:translateX(-2px); }
 
-  .fh-hero {
-    position:relative; min-height:100vh;
-    display:flex; align-items:center; justify-content:center; overflow:hidden;
-    background:radial-gradient(ellipse 90% 70% at 50% 40%,#2a0808 0%,#130506 45%,#06040a 100%);
-  }
+  /* HERO */
+  .fh-hero { position:relative; min-height:100vh; display:flex; align-items:center; justify-content:center; overflow:hidden; background:radial-gradient(ellipse 90% 70% at 50% 40%,#2a0808 0%,#130506 45%,#06040a 100%); }
   .fh-hero-orb { position:absolute; border-radius:50%; pointer-events:none; }
-  .fh-hero-content {
-    text-align:center; position:relative; z-index:2; padding:0 24px;
-    opacity:0; transform:translateY(32px);
-    transition:opacity 0.9s cubic-bezier(0.34,1.3,0.64,1),transform 0.9s cubic-bezier(0.34,1.3,0.64,1);
-  }
+  .fh-hero-content { text-align:center; position:relative; z-index:2; padding:0 24px; opacity:0; transform:translateY(32px); transition:opacity 0.9s cubic-bezier(0.34,1.3,0.64,1),transform 0.9s cubic-bezier(0.34,1.3,0.64,1); }
   .fh-hero-content.visible { opacity:1; transform:translateY(0); }
-  .fh-hero-badge {
-    display:inline-flex; align-items:center; gap:8px;
-    background:rgba(200,60,60,0.1); border:1px solid rgba(200,60,60,0.25);
-    border-radius:100px; padding:7px 18px; margin-bottom:32px;
-    font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:rgba(220,180,160,0.7);
-  }
+  .fh-hero-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(200,60,60,0.1); border:1px solid rgba(200,60,60,0.25); border-radius:100px; padding:7px 18px; margin-bottom:32px; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:rgba(220,180,160,0.7); }
   .fh-hero-title { font-family:'Playfair Display',serif; font-size:clamp(72px,14vw,130px); font-weight:900; letter-spacing:-4px; line-height:0.95; margin-bottom:26px; }
   .fh-hero-title .gold { color:#e8c84a; }
   .fh-hero-title .crimson { background:linear-gradient(135deg,#c0392b,#8b0000); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
   .fh-hero-sub { font-size:15px; color:rgba(220,200,180,0.48); font-style:italic; letter-spacing:0.06em; max-width:480px; margin:0 auto 44px; line-height:1.75; }
-  .fh-hero-cta {
-    background:linear-gradient(135deg,#c0392b,#8b0000); color:#e8c84a; border:none; border-radius:2px;
-    padding:15px 42px; font-size:12px; font-weight:600; letter-spacing:0.22em; text-transform:uppercase;
-    cursor:pointer; font-family:'Crimson Pro',serif; box-shadow:0 0 40px rgba(192,57,43,0.5);
-    transition:transform 0.2s,box-shadow 0.2s;
-  }
+  .fh-hero-cta { background:linear-gradient(135deg,#c0392b,#8b0000); color:#e8c84a; border:none; border-radius:2px; padding:15px 42px; font-size:12px; font-weight:600; letter-spacing:0.22em; text-transform:uppercase; cursor:pointer; font-family:'Crimson Pro',serif; box-shadow:0 0 40px rgba(192,57,43,0.5); transition:transform 0.2s,box-shadow 0.2s; }
   .fh-hero-cta:hover { transform:translateY(-2px); box-shadow:0 6px 50px rgba(192,57,43,0.8); }
   .fh-stars { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
   .fh-star { position:absolute; color:#e8c84a; animation:starTwinkle 2.5s ease-in-out infinite; }
   @keyframes starTwinkle { 0%,100%{opacity:0.25;transform:scale(1)} 50%{opacity:1;transform:scale(1.3)} }
 
-  .fh-ticker {
-    background:rgba(0,0,0,0.5); border-top:1px solid rgba(180,60,60,0.2); border-bottom:1px solid rgba(180,60,60,0.2);
-    padding:9px 28px; display:flex; align-items:center; gap:16px;
-  }
-  .fh-ticker-badge {
-    background:linear-gradient(135deg,#8b0000,#5a0000); color:#e8c84a; font-size:10px; letter-spacing:0.2em;
-    text-transform:uppercase; padding:3px 10px; border-radius:1px; font-family:'Playfair Display',serif;
-    border:1px solid rgba(200,100,60,0.3); white-space:nowrap; flex-shrink:0;
-  }
+  /* TICKER */
+  .fh-ticker { background:rgba(0,0,0,0.5); border-top:1px solid rgba(180,60,60,0.2); border-bottom:1px solid rgba(180,60,60,0.2); padding:9px 28px; display:flex; align-items:center; gap:16px; }
+  .fh-ticker-badge { background:linear-gradient(135deg,#8b0000,#5a0000); color:#e8c84a; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; padding:3px 10px; border-radius:1px; font-family:'Playfair Display',serif; border:1px solid rgba(200,100,60,0.3); white-space:nowrap; flex-shrink:0; }
   .fh-ticker-text { font-style:italic; font-size:12px; color:rgba(180,160,140,0.55); letter-spacing:0.1em; flex:1; text-align:center; }
 
+  /* DIVIDER */
   .fh-divider { display:flex; align-items:center; gap:14px; margin-bottom:40px; }
   .fh-divider-line { flex:1; height:1px; background:linear-gradient(90deg,rgba(140,40,40,0.6),transparent); }
   .fh-divider-line.right { background:linear-gradient(90deg,transparent,rgba(140,40,40,0.6)); }
   .fh-divider-title { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:#c4a888; letter-spacing:0.08em; text-transform:uppercase; white-space:nowrap; }
 
+  /* GENRE GRID */
   .fh-genre-grid { display:grid; grid-template-columns:1fr 1fr; gap:11px; }
-  .fh-genre-card {
-    background:linear-gradient(135deg,#130808 0%,#0e0505 100%);
-    border:1px solid rgba(100,30,30,0.4); border-radius:2px; padding:20px 18px;
-    cursor:pointer; position:relative; overflow:hidden;
-    transition:transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94),border-color 0.35s,box-shadow 0.35s;
-  }
+  .fh-genre-card { background:linear-gradient(135deg,#130808 0%,#0e0505 100%); border:1px solid rgba(100,30,30,0.4); border-radius:2px; padding:20px 18px; cursor:pointer; position:relative; overflow:hidden; transition:transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94),border-color 0.35s,box-shadow 0.35s; }
   .fh-genre-card::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(200,60,60,0.7),transparent); opacity:0; transition:opacity 0.3s; }
   .fh-genre-card:hover { transform:translateY(-3px); border-color:rgba(160,50,50,0.7); box-shadow:0 12px 36px rgba(120,20,20,0.45); }
   .fh-genre-card:hover::before { opacity:1; }
@@ -244,16 +173,12 @@ const STYLES = `
   .fh-genre-tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:12px; }
   .fh-genre-tag { background:rgba(140,40,40,0.18); border:1px solid rgba(140,40,40,0.3); border-radius:1px; padding:2px 7px; font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:rgba(180,130,110,0.7); }
 
+  /* REEL */
   .fh-reel-center { display:flex; flex-direction:column; align-items:center; margin-bottom:36px; }
-  .fh-reel-btn {
-    width:82px; height:82px; border-radius:50%;
-    background:radial-gradient(circle,#c0392b 0%,#8b0000 55%,#3d0000 100%);
-    display:flex; align-items:center; justify-content:center; font-size:2rem;
-    border:3px solid rgba(100,20,20,0.8); box-shadow:0 0 40px rgba(192,57,43,0.6),0 0 80px rgba(192,57,43,0.18);
-    animation:reelPulse 3s ease-in-out infinite; cursor:default;
-  }
+  .fh-reel-btn { width:82px; height:82px; border-radius:50%; background:radial-gradient(circle,#c0392b 0%,#8b0000 55%,#3d0000 100%); display:flex; align-items:center; justify-content:center; font-size:2rem; border:3px solid rgba(100,20,20,0.8); box-shadow:0 0 40px rgba(192,57,43,0.6),0 0 80px rgba(192,57,43,0.18); animation:reelPulse 3s ease-in-out infinite; cursor:default; }
   .fh-reel-label { margin-top:12px; font-family:'Playfair Display',serif; font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:rgba(180,140,100,0.55); }
 
+  /* TRENDING */
   .fh-trend-row { display:flex; align-items:center; gap:18px; padding:15px 12px; border-bottom:1px solid rgba(100,30,30,0.2); cursor:pointer; border-radius:3px; transition:background 0.2s,transform 0.2s; }
   .fh-trend-row:hover { background:rgba(140,30,30,0.1); transform:translateX(6px); }
   .fh-trend-num { font-family:'Playfair Display',serif; font-size:17px; font-weight:700; min-width:32px; color:rgba(180,130,100,0.22); transition:color 0.2s; }
@@ -266,131 +191,131 @@ const STYLES = `
   .fh-trend-arrow { font-size:13px; color:rgba(180,130,100,0.22); transition:color 0.2s,transform 0.2s; flex-shrink:0; }
   .fh-trend-row:hover .fh-trend-arrow { color:#e8c84a; transform:translateX(4px); }
 
+  /* LIVE */
   .fh-live-dot { width:6px; height:6px; border-radius:50%; display:inline-block; animation:livePulse 1.5s infinite; }
   @keyframes livePulse { 0%,100%{opacity:1} 50%{opacity:0.2} }
   .fh-live-badge { display:inline-flex; align-items:center; gap:5px; border-radius:100px; padding:3px 10px; font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; }
 
+  /* SECTION PAGE */
   .fh-section-hero { position:relative; height:260px; display:flex; align-items:center; justify-content:center; overflow:hidden; background:linear-gradient(135deg,#0a0608 0%,#120812 50%,#06040a 100%); }
-
-  /* section item row */
-  .fh-section-row {
-    display:flex; align-items:center; gap:16px; padding:14px 14px;
-    border-bottom:1px solid rgba(100,30,30,0.18); border-radius:3px;
-    transition:background 0.2s;
-  }
+  .fh-section-row { display:flex; align-items:center; gap:16px; padding:14px 14px; border-bottom:1px solid rgba(100,30,30,0.18); border-radius:3px; transition:background 0.2s; }
   .fh-section-row:hover { background:rgba(140,30,30,0.1); }
-  .fh-play-btn {
-    display:flex; align-items:center; gap:5px;
-    background:linear-gradient(135deg,#8b0000,#5a0000);
-    border:1px solid rgba(200,80,60,0.4); border-radius:2px;
-    padding:6px 14px; color:#e8c84a; cursor:pointer;
-    font-family:'Crimson Pro',serif; font-size:10px; letter-spacing:0.16em; text-transform:uppercase;
-    transition:all 0.2s; white-space:nowrap; flex-shrink:0;
-  }
+  .fh-play-btn { display:flex; align-items:center; gap:5px; background:linear-gradient(135deg,#8b0000,#5a0000); border:1px solid rgba(200,80,60,0.4); border-radius:2px; padding:6px 14px; color:#e8c84a; cursor:pointer; font-family:'Crimson Pro',serif; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; transition:all 0.2s; white-space:nowrap; flex-shrink:0; }
   .fh-play-btn:hover { background:linear-gradient(135deg,#c0392b,#8b0000); box-shadow:0 0 16px rgba(192,57,43,0.5); transform:scale(1.04); }
 
   /* MODAL */
-  .fh-modal-overlay {
-    position:fixed; inset:0; z-index:999;
-    background:rgba(3,2,6,0.94); backdrop-filter:blur(12px);
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    padding:20px;
-    animation:fadeIn 0.25s ease;
-  }
+  .fh-modal-overlay { position:fixed; inset:0; z-index:999; background:rgba(3,2,6,0.95); backdrop-filter:blur(16px); display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:0; overflow-y:auto; animation:fadeIn 0.25s ease; }
   @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-  .fh-modal-header {
-    display:flex; align-items:center; justify-content:space-between;
-    width:100%; max-width:960px; margin-bottom:14px; gap:16px;
-  }
-  .fh-modal-title { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:#e8c84a; letter-spacing:0.04em; }
-  .fh-modal-sub { font-size:12px; font-style:italic; color:rgba(180,140,100,0.6); margin-top:2px; letter-spacing:0.06em; }
-  .fh-modal-close {
-    background:rgba(140,30,30,0.2); border:1px solid rgba(180,60,60,0.35); border-radius:2px;
-    color:#e8c84a; cursor:pointer; font-size:18px; width:36px; height:36px;
-    display:flex; align-items:center; justify-content:center; flex-shrink:0;
-    transition:all 0.2s;
-  }
-  .fh-modal-close:hover { background:rgba(200,50,50,0.35); transform:scale(1.1); }
-  .fh-modal-frame {
-    width:100%; max-width:960px; border-radius:4px; overflow:hidden;
-    border:1px solid rgba(140,40,40,0.4);
-    box-shadow:0 0 80px rgba(120,20,20,0.5);
-    background:#000;
-  }
 
+  /* modal top bar */
+  .fh-modal-topbar { width:100%; background:rgba(8,4,14,0.98); border-bottom:1px solid rgba(160,50,50,0.25); padding:0 32px; height:52px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; gap:16px; position:sticky; top:0; z-index:10; }
+  .fh-modal-back { display:flex; align-items:center; gap:7px; background:rgba(140,30,30,0.18); border:1px solid rgba(180,60,60,0.32); border-radius:2px; padding:6px 16px; color:#e8c84a; cursor:pointer; font-family:'Crimson Pro',serif; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; transition:all 0.2s; flex-shrink:0; }
+  .fh-modal-back:hover { background:rgba(200,50,50,0.3); transform:translateX(-3px); }
+  .fh-modal-crumb { display:flex; align-items:center; gap:6px; font-size:11px; letter-spacing:0.1em; overflow:hidden; }
+  .fh-modal-crumb-home { color:rgba(160,120,80,0.55); cursor:pointer; transition:color 0.2s; white-space:nowrap; }
+  .fh-modal-crumb-home:hover { color:#e8c84a; }
+  .fh-modal-crumb-sep { color:rgba(120,70,50,0.4); font-size:10px; flex-shrink:0; }
+  .fh-modal-crumb-section { color:rgba(180,140,100,0.55); font-style:italic; white-space:nowrap; }
+  .fh-modal-crumb-title { color:#e8c84a; font-style:italic; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px; }
+  .fh-modal-close { background:rgba(140,30,30,0.2); border:1px solid rgba(180,60,60,0.35); border-radius:2px; color:#e8c84a; cursor:pointer; font-size:16px; width:34px; height:34px; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.2s; }
+  .fh-modal-close:hover { background:rgba(200,50,50,0.35); transform:scale(1.1); }
+
+  /* modal body */
+  .fh-modal-body { width:100%; max-width:980px; margin:0 auto; padding:24px 24px 40px; display:flex; flex-direction:column; gap:16px; }
+  .fh-modal-info { display:flex; align-items:center; gap:14px; }
+  .fh-modal-title { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:#e8c84a; letter-spacing:0.04em; }
+  .fh-modal-sub { font-size:12px; font-style:italic; color:rgba(180,140,100,0.6); margin-top:3px; letter-spacing:0.06em; }
+  .fh-modal-frame { width:100%; border-radius:4px; overflow:hidden; border:1px solid rgba(140,40,40,0.4); box-shadow:0 0 80px rgba(120,20,20,0.5); background:#000; }
+  .fh-modal-hint { text-align:center; font-size:10px; color:rgba(120,90,70,0.4); letter-spacing:0.14em; text-transform:uppercase; font-style:italic; }
+
+  /* EXPLORE NAV */
   .fh-section-nav { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:48px; }
-  .fh-section-pill {
-    display:flex; align-items:center; gap:6px;
-    background:rgba(140,30,30,0.1); border:1px solid rgba(140,30,30,0.28);
-    border-radius:2px; padding:10px 20px; color:#c4a888; cursor:pointer;
-    font-family:'Crimson Pro',serif; font-size:13px; font-weight:600; letter-spacing:0.08em;
-    transition:all 0.22s;
-  }
+  .fh-section-pill { display:flex; align-items:center; gap:6px; background:rgba(140,30,30,0.1); border:1px solid rgba(140,30,30,0.28); border-radius:2px; padding:10px 20px; color:#c4a888; cursor:pointer; font-family:'Crimson Pro',serif; font-size:13px; font-weight:600; letter-spacing:0.08em; transition:all 0.22s; }
   .fh-section-pill:hover { background:rgba(180,50,50,0.22); border-color:rgba(200,60,60,0.5); transform:translateY(-2px); color:#e8c84a; }
   .fh-footer { border-top:1px solid rgba(100,30,30,0.22); padding:22px 28px; text-align:center; }
 `;
 
-// ── MODAL PLAYER ──────────────────────────────────────────────────
-function MediaModal({ item, onClose }) {
+// ── MODAL ─────────────────────────────────────────────────────────
+function MediaModal({ item, activeSection, onClose, onGoHome }) {
   const overlayRef = useRef();
 
   useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
   }, [onClose]);
 
-  const handleOverlayClick = (e) => {
-    if (e.target === overlayRef.current) onClose();
-  };
-
-  const isYT = item.embedType === "youtube";
-  const isGame = item.embedType === "game";
+  const isYT      = item.embedType === "youtube";
+  const isGame    = item.embedType === "game";
   const isBuiltin = item.embedType === "builtin";
-
-  const frameHeight = isGame || isBuiltin ? "520px" : "520px";
-  const aspectStyle = isYT ? { paddingBottom: "56.25%", position: "relative", height: 0 } : { height: frameHeight };
+  const frameH    = "520px";
 
   return (
-    <div className="fh-modal-overlay" ref={overlayRef} onClick={handleOverlayClick}>
-      <div className="fh-modal-header">
-        <div>
-          <div className="fh-modal-title">{item.icon} {item.title}</div>
-          <div className="fh-modal-sub">{item.sub} · {item.tag}</div>
+    <div className="fh-modal-overlay" ref={overlayRef}>
+
+      {/* ── Sticky top bar: ← Back  |  Breadcrumb  |  ✕ ── */}
+      <div className="fh-modal-topbar">
+
+        {/* ← Back */}
+        <button className="fh-modal-back" onClick={onClose}>
+          <span style={{ fontSize:"14px" }}>←</span> Back
+        </button>
+
+        {/* Breadcrumb: Home › Section › Title */}
+        <div className="fh-modal-crumb">
+          <span className="fh-modal-crumb-home" onClick={onGoHome}>Home</span>
+          <span className="fh-modal-crumb-sep">›</span>
+          <span className="fh-modal-crumb-section">{activeSection}</span>
+          <span className="fh-modal-crumb-sep">›</span>
+          <span className="fh-modal-crumb-title">{item.title}</span>
         </div>
+
+        {/* ✕ Close */}
         <button className="fh-modal-close" onClick={onClose}>✕</button>
       </div>
 
-      <div className="fh-modal-frame" style={aspectStyle}>
-        {isYT && (
-          <iframe
-            style={{ position:"absolute", top:0, left:0, width:"100%", height:"100%", border:"none" }}
-            src={`https://www.youtube.com/embed/${item.embedId}?autoplay=1&rel=0`}
-            title={item.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-        )}
-        {isGame && (
-          <iframe
-            style={{ width:"100%", height:frameHeight, border:"none", display:"block" }}
-            src={item.embedUrl}
-            title={item.title}
-            allow="fullscreen"
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-          />
-        )}
-        {isBuiltin && item.embedId === "tictactoe" && (
-          <div style={{ height: frameHeight }}>
-            <TicTacToe />
-          </div>
-        )}
-      </div>
+      {/* ── Body ── */}
+      <div className="fh-modal-body">
 
-      <div style={{ marginTop:"12px", display:"flex", alignItems:"center", gap:"8px" }}>
-        <span style={{ fontSize:"10px", color:"rgba(140,100,80,0.5)", letterSpacing:"0.14em", textTransform:"uppercase", fontStyle:"italic" }}>
-          Press <kbd style={{ background:"rgba(140,40,40,0.2)", border:"1px solid rgba(140,40,40,0.3)", borderRadius:"2px", padding:"1px 5px", fontSize:"10px", color:"#c4a888" }}>ESC</kbd> or click outside to close
-        </span>
+        {/* Title + tag */}
+        <div className="fh-modal-info">
+          <div style={{ fontSize:"32px" }}>{item.icon}</div>
+          <div>
+            <div className="fh-modal-title">{item.title}</div>
+            <div className="fh-modal-sub">{item.sub} · <span style={{ color: tagAccents[item.tag] || "#e8c84a" }}>{item.tag}</span></div>
+          </div>
+        </div>
+
+        {/* Embed */}
+        <div className="fh-modal-frame" style={ isYT ? { paddingBottom:"56.25%", position:"relative", height:0 } : { height: frameH } }>
+          {isYT && (
+            <iframe
+              style={{ position:"absolute", top:0, left:0, width:"100%", height:"100%", border:"none" }}
+              src={`https://www.youtube.com/embed/${item.embedId}?autoplay=1&rel=0`}
+              title={item.title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          )}
+          {isGame && (
+            <iframe
+              style={{ width:"100%", height:frameH, border:"none", display:"block" }}
+              src={item.embedUrl}
+              title={item.title}
+              allow="fullscreen"
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+            />
+          )}
+          {isBuiltin && item.embedId === "tictactoe" && (
+            <div style={{ height: frameH }}><TicTacToe /></div>
+          )}
+        </div>
+
+        {/* ESC hint */}
+        <p className="fh-modal-hint">
+          Press <kbd style={{ background:"rgba(140,40,40,0.2)", border:"1px solid rgba(140,40,40,0.3)", borderRadius:"2px", padding:"1px 6px", fontSize:"10px", color:"#c4a888" }}>ESC</kbd> · click <strong style={{ color:"rgba(160,100,80,0.6)" }}>← Back</strong> · or tap outside the bar to dismiss
+        </p>
       </div>
     </div>
   );
@@ -398,26 +323,36 @@ function MediaModal({ item, onClose }) {
 
 // ── APP ROOT ──────────────────────────────────────────────────────
 export default function FunHub() {
-  const [activeNav, setActiveNav] = useState(null);
-  const [mounted, setMounted] = useState(false);
-  const [pageVisible, setPageVisible] = useState(true);
-  const [playingItem, setPlayingItem] = useState(null);
+  const [activeNav,    setActiveNav]    = useState(null);
+  const [mounted,      setMounted]      = useState(false);
+  const [pageVisible,  setPageVisible]  = useState(true);
+  const [playingItem,  setPlayingItem]  = useState(null);
 
   useEffect(() => { setTimeout(() => setMounted(true), 120); }, []);
 
   const navigate = (section) => {
-    if (playingItem) return;
+    setPlayingItem(null);
     setPageVisible(false);
     setTimeout(() => { setActiveNav(section); setPageVisible(true); window.scrollTo({ top:0, behavior:"smooth" }); }, 240);
   };
   const goHome = () => navigate(null);
+
+  // Close modal and go all the way home
+  const modalGoHome = () => { setPlayingItem(null); goHome(); };
 
   return (
     <div className="fh-root" style={{ opacity: pageVisible ? 1 : 0, transition:"opacity 0.24s ease" }}>
       <style>{STYLES}</style>
 
       {/* MODAL */}
-      {playingItem && <MediaModal item={playingItem} onClose={() => setPlayingItem(null)} />}
+      {playingItem && (
+        <MediaModal
+          item={playingItem}
+          activeSection={activeNav || "Home"}
+          onClose={() => setPlayingItem(null)}
+          onGoHome={modalGoHome}
+        />
+      )}
 
       {/* NAV */}
       <nav className="fh-nav">
@@ -434,21 +369,25 @@ export default function FunHub() {
         )}
         <div className="fh-nav-links">
           {NAV_SECTIONS.map(item => (
-            <button key={item} className={`fh-nav-btn ${activeNav === item ? "active" : ""}`} onClick={() => navigate(item)}>{item}</button>
+            <button key={item} className={`fh-nav-btn ${activeNav===item?"active":""}`} onClick={() => navigate(item)}>{item}</button>
           ))}
-          {activeNav && <button className="fh-home-btn" onClick={goHome}><span style={{ fontSize:"13px" }}>←</span> Home</button>}
+          {activeNav && (
+            <button className="fh-home-btn" onClick={goHome}>
+              <span style={{ fontSize:"13px" }}>←</span> Home
+            </button>
+          )}
         </div>
       </nav>
 
       {activeNav
         ? <SectionPage section={activeNav} data={sectionDetails[activeNav]} onNav={navigate} onHome={goHome} onPlay={setPlayingItem} />
-        : <HomePage mounted={mounted} onNav={navigate} onPlay={setPlayingItem} />}
+        : <HomePage mounted={mounted} onNav={navigate} />}
     </div>
   );
 }
 
 // ── HOME PAGE ─────────────────────────────────────────────────────
-function HomePage({ mounted, onNav, onPlay }) {
+function HomePage({ mounted, onNav }) {
   return (
     <>
       <section className="fh-hero">
@@ -513,9 +452,8 @@ function HomePage({ mounted, onNav, onPlay }) {
 function SectionPage({ section, data, onNav, onHome, onPlay }) {
   const { hero, items } = data;
   const others = NAV_SECTIONS.filter(s => s !== section);
-
   const getPlayLabel = (type) => {
-    if (type === "youtube") return section === "Games" ? "▶ Watch" : section === "Music" || section === "Dance" ? "▶ Play" : "▶ Trailer";
+    if (type === "youtube") return section === "Music" || section === "Dance" ? "▶ Play" : "▶ Trailer";
     if (type === "game" || type === "builtin") return "🎮 Play Now";
     return "▶ Open";
   };
@@ -540,7 +478,7 @@ function SectionPage({ section, data, onNav, onHome, onPlay }) {
           </span>
         </div>
 
-        {items.map((item, i) => (
+        {items.map((item,i) => (
           <div key={i} className="fh-section-row">
             <span style={{fontFamily:"'Playfair Display',serif",fontSize:"15px",fontWeight:700,color:`${hero.accent}50`,minWidth:"30px"}}>{item.rank}</span>
             <span style={{fontSize:"20px"}}>{item.icon}</span>
@@ -549,9 +487,7 @@ function SectionPage({ section, data, onNav, onHome, onPlay }) {
               <div style={{color:"rgba(160,130,110,0.48)",fontSize:"11px",fontStyle:"italic",marginTop:"2px"}}>{item.sub}</div>
             </div>
             <span style={{background:`${hero.accent}15`,border:`1px solid ${hero.accent}28`,borderRadius:"1px",padding:"3px 9px",fontSize:"10px",letterSpacing:"0.1em",textTransform:"uppercase",color:hero.accent,flexShrink:0}}>{item.tag}</span>
-            <button className="fh-play-btn" onClick={() => onPlay(item)}>
-              {getPlayLabel(item.embedType)}
-            </button>
+            <button className="fh-play-btn" onClick={() => onPlay(item)}>{getPlayLabel(item.embedType)}</button>
           </div>
         ))}
 
